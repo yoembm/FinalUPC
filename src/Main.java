@@ -39,6 +39,8 @@ public class Main {
             }
 
             System.out.println("Desear realizar otra tarea?: Continuar(S) - Salir(N)");
+
+
             cerrarApp = scanner.next();
 
         }
