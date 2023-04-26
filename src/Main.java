@@ -67,7 +67,7 @@ public class Main {
     // Harumy
     static void buscaPostulante() {
     }
-    //QueryDB método nuevo por frank valle
+    //QueryDB método nuevo por frank valle sanchez
     static void queryDB(String type, String[] data) {
         switch (type){
             case "insert" : //table_postulantes
