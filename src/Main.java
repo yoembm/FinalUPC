@@ -52,6 +52,11 @@ public class Main {
 
     // Responsable Yoel
     static void registraPostulante() {
+
+        // guardar en la BD
+
+        // metodo para conectar
+
     }
 
     // Responsable Yoel
