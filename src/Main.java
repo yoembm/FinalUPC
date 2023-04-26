@@ -1,6 +1,10 @@
 import java.util.Scanner;
 
 public class Main {
+
+    public static String[] datos_postulantesBD;
+    public static String[] datos_centroMedico;
+
     public static void main(String[] args) {
 
         System.out.println("------------------------------------");
@@ -63,6 +67,23 @@ public class Main {
     // Harumy
     static void buscaPostulante() {
     }
-
-
+    //QueryDB método
+    static void queryDB(String type, String[] data) {
+        switch (type){
+            case "insert" : //table_postulantes
+                /**
+                 * CENTRO MEDICO DE SALUD: nombreCeMed, direccionDepCeMed
+                 * POSTULANTE:  nombres, apellidos, numDni, edad, direccionDep,
+                 * TRAMITE: tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
+                 * BUSQUEDA:  numDNI, fecha
+                 * */
+                break;
+            case "select" : break;
+            //case "update" : break;
+            //case "delete" : break;
+        }
+    }
+    static void init_datos() {
+        //datos_postulantes = new Array datos_centroMedico
+    }
 }
