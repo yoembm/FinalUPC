@@ -2,27 +2,31 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static String[] datos_postulantesBD;
-    public static String[] datos_centroMedico;
+
+    public static  arrayDb myQuery = new arrayDb(); //Variable Global base de datos.
 
     public static void main(String[] args) {
 
-        System.out.println("------------------------------------");
-        System.out.println("SISTEMA DE REGISTRO DE POSTULANTES");
-        System.out.println("------------------------------------");
+        System.out.println("-------------------------------------------------------------------------------");
+        System.out.println("                     SISTEMA DE REGISTRO DE POSTULANTES                        ");
+        System.out.println("     validación de trámites, registro postulantes, búsqueda de expedientes     ");
+        System.out.println("                         Version 1.0   |   2023                                ");
+        System.out.println("-------------------------------------------------------------------------------"+"\n");
+    ;
 
-        String cerrarApp = "S";
+        String interruptorAPP = "open";
 
         Scanner scanner = new Scanner(System.in);
 
-        while (!cerrarApp.equals("N")) {
+        //Selector de opciones
+        do{
+            System.out.println("                                MENU PRINCIPAL"+"\n");
+            System.out.println("        [1]. Registrar un nuevo Postulante");
+            System.out.println("        [2]. Ingresar resultados de evaluación");
+            System.out.println("        [3]. Buscar expedientes médicos");
+            System.out.println("        [4]. Salir" +"\n" );
 
-            System.out.println("\nIngrese a tarea a realizar:");
-            System.out.println("-------------------------------");
-            System.out.println("Registrar postulante: 1");
-            System.out.println("Actualizar resultado Exámen médico: 2");
-            System.out.println("Buscar registro: 3");
-
+            System.out.print("    Elija una opción : " );
             int opcion = scanner.nextInt();
 
             switch (opcion) {
@@ -36,16 +40,27 @@ public class Main {
                 case 3:
                     buscaPostulante();
                     break;
+                case 4: interruptorAPP = "end";
+
+                    break;
                 default:
                     System.out.println("Opción no válida");
                     break;
 
             }
 
-            System.out.println("Desear realizar otra tarea?: Continuar(S) - Salir(N)");
-            cerrarApp = scanner.next();
 
-        }
+
+        }while(interruptorAPP.equals("open"));
+
+        //System.out.println("-------------------------------------------------------------------------------");
+        System.out.println("\n"+"                    Gracias por usar nuestro programa                          ");
+        System.out.println("                Grupo 3 | Fundamentos de programacion 1 |  UPC                        ");
+        //System.out.println("-------------------------------------------------------------------------------" );
+
+
+
+
 
     }
 
@@ -53,9 +68,16 @@ public class Main {
     // Responsable Yoel
     static void registraPostulante() {
 
-        // guardar en la BD
+        //Ejemplo nuevo: nombres, apellidos, numDni, edad, direccionDep
+        String[] newPostulante = new String[6];
+        newPostulante[0] = "Frank C.";
+        newPostulante[1] = "Valle Sanchez";
+        newPostulante[2] = "40740000";
+        newPostulante[3] = "31";
+        newPostulante[4] = "Lima";
+        myQuery.nuevoPostulante( newPostulante );
 
-        // metodo para conectar
+        System.out.println("    Se ha ingresado el postulante "+ newPostulante[0]+"\n");
 
     }
 
@@ -66,29 +88,136 @@ public class Main {
 
     // Dayer
     static void actualizarResultados(){
+        //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
+        String[] evalucion = new String[5];
+        evalucion[0] = "recat A2B";
+        evalucion[1] = "10/12/2022";
+        evalucion[2] = "APTO";
+        evalucion[3] = "20230250003";
+        //mostrar resultados en pantalla;
+        myQuery.actualizarPostulante("01", evalucion);
+        System.out.println();
 
     }
 
     // Harumy
     static void buscaPostulante() {
-    }
-    //QueryDB método nuevo por frank C. valle sanchez
-    static void queryDB(String type, String[] data) {
-        switch (type){
-            case "insert" : //table_postulantes
-                /**
-                 * CENTRO MEDICO DE SALUD: nombreCeMed, direccionDepCeMed
-                 * POSTULANTE:  nombres, apellidos, numDni, edad, direccionDep,
-                 * TRAMITE: tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
-                 * BUSQUEDA:  numDNI, fecha
-                 * */
-                break;
-            case "select" : break;
-            //case "update" : break;
-            //case "delete" : break;
+        //Ejemplo de buscar
+        String[][] encontrados= myQuery.buscaPostulantes("dni", "44");
+        System.out.println("Encontrados:");
+        int e, e1;
+        for (e = 0; e< encontrados.length; e++){
+            //System.out.println("Encontrados:");
+            System.out.println(" datos fila" +e + ": "+
+                    encontrados[e][0] +", "+ encontrados[e][1]+", "+encontrados[e][2]+", "+
+                    encontrados[e][3]+", "+  encontrados[e][4]+", "+encontrados[e][5]+", "+
+                    encontrados[e][6]+", "+  encontrados[e][7]+", "+encontrados[e][8]+", "+
+                    encontrados[e][9]+", "+  encontrados[e][10]+" ");
+
         }
     }
-    static void init_datos() {
-        //datos_postulantes = new Array datos_centroMedico
+
+
+
+}
+ class arrayDb {
+    //Tabla "tbPostulantes" (Simulando una BD).
+    //columnas del postulante : ID, nombres, apellidos, numDni, edad, direccionDep,
+    //columnas del tramite : tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
+    public static String[][] tbPostulantes = new String[25][11];
+    public static String[][] tbPostulantes_resultados = new String[25][11];;
+    //result
+    //public static String[] resultados;
+    public static int numFilasUsadas;
+    public static String fila_idUltimaModificada;
+
+    public static String message;
+
+
+    public arrayDb() {
+        //String[][] tbPostulantes = new String[25][11];
+        //String[][] resultados = new String[25][11];
+        //insertando contenido demo
+        String demo1[] = {"11","2","3","41","5","6","7","8","9","10","11"}; tbPostulantes[0]= demo1;
+        String demo2[] = {"12","2","3","42","5","6","7","8","9","10","11"}; tbPostulantes[1]= demo2;
+        String demo3[] = {"13","2","3","43","5","6","7","8","9","10","11"}; tbPostulantes[2]= demo3;
+        String demo4[] = {"14","2","3","44","5","6","7","8","9","10","11"}; tbPostulantes[3]= demo4;
+        String demo5[] = {"15","2","3","45","5","6","7","8","9","10","11"}; tbPostulantes[4]= demo5;
+
+        numFilasUsadas = 10;
+       // ultimafilaModificada = 10;
     }
+
+    static String[][] buscaPostulantes(String tipo, String valor) { //"fecha", "dni"
+        int columnaAbuscar = 0;
+        //validar que el dato ingresado es correcto
+        switch (tipo) {
+            case "fecha":
+                        columnaAbuscar=8;
+                break;
+            case "dni": //Si no es numerico
+                        if (!valor.matches("-?\\d+")) {
+                            String [][] arrayError = new String[1][11];
+                            arrayError[0][0] = "error";
+                            return arrayError;
+                        }
+                        columnaAbuscar=3;
+                break;
+        }
+        int f =0;
+        for(int i=0; i<25; i++){
+            //limpieza de busquedas anteriores
+            tbPostulantes_resultados[i] = new String[11];
+
+            //nuevos resultados
+            if( valor == tbPostulantes[i][columnaAbuscar]){ //validar si existe
+                tbPostulantes_resultados[f]= tbPostulantes[i];
+                f++;
+            }
+        }
+        //separar solo resultados encontrados
+        String [][] resultadosEncontrados = new String[f][11];
+        for(int i=0; i<25; i++){
+
+            if( ! (tbPostulantes_resultados[i][0] == null) ){ //validar si existe
+                resultadosEncontrados[i]= tbPostulantes_resultados[i];
+                f++;
+            }
+        }
+
+
+
+
+        return resultadosEncontrados;
+    }
+
+    //Método nuevoPostulante . recibe como parametro un Array con datos String
+    //   orden de columnas: ID, nombres, apellidos, numDni, edad, direccionDep.
+    static boolean nuevoPostulante(String[] data){
+        int n = numFilasUsadas;
+        for (int i=0; i < data.length; i++) {
+            tbPostulantes[n][i] = data[i];
+        }
+        numFilasUsadas++;
+        //fila_idUltimaModificada = n;
+        return true;
+    }
+
+     //Método actualizarPostulante . recibe como parametro un String identificador y un Array con datos String
+     //     columnas del tramite : tramite, categoria, fecha, resultado, NumExpedienteMTC
+     static boolean actualizarPostulante(String id, String[] data){
+         //int n = numFilasUsadas;
+         for (int i=0; i < numFilasUsadas; i++) {
+             if(tbPostulantes[i][0].equals(id) ){
+                 tbPostulantes[i][5] = data[0];
+                 tbPostulantes[i][6] = data[0];
+                 tbPostulantes[i][7] = data[0];
+                 tbPostulantes[i][8] = data[0];
+                 tbPostulantes[i][9] = data[0];
+             }
+
+         }
+         //fila_idUltimaModificada = id;
+         return true;
+     }
 }
