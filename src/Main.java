@@ -59,9 +59,6 @@ public class Main {
         //System.out.println("-------------------------------------------------------------------------------" );
 
 
-
-
-
     }
 
 
@@ -69,21 +66,55 @@ public class Main {
     static void registraPostulante() {
 
         //Ejemplo nuevo: nombres, apellidos, numDni, edad, direccionDep
+
         String[] newPostulante = new String[6];
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\n Ingrese datos para registro de postulante:");
+        System.out.println("----------------------------------------------------\n");
+
+        System.out.println("Nombre: ");
+        newPostulante[0] = scanner.next();
+
+        System.out.println("Apellidos: ");
+        newPostulante[1] = scanner.next();
+
+        System.out.println("Documento de identidad: ");
+        newPostulante[2] = scanner.next();
+
+        System.out.println("Edad: ");
+        newPostulante[3] = scanner.next();
+
+        System.out.println("Departamento: ");
+        newPostulante[4] = scanner.next();
+
+        /*
         newPostulante[0] = "Frank C.";
         newPostulante[1] = "Valle Sanchez";
         newPostulante[2] = "40740000";
         newPostulante[3] = "31";
         newPostulante[4] = "Lima";
-        myQuery.nuevoPostulante( newPostulante );
+        */
 
-        System.out.println("    Se ha ingresado el postulante "+ newPostulante[0]+"\n");
+        // Valida si el postulante cumple con los requisitos
+        boolean validPostulante = false;
+        validPostulante = validaRequisitos(newPostulante);
+
+        if (validPostulante) {
+            arrayDb.nuevoPostulante(newPostulante);
+            System.out.println("Se ha ingresado el postulante: \nDNI: " + newPostulante[2] + "\nNombre: " + newPostulante[0] + " " + newPostulante[1] + "\nEdad: " + newPostulante[3] + "\nDepartamento: " + newPostulante[4]);
+        } else {
+            System.out.println("El postulante no cumple con los requisitos de acuerdo con los reglamentos del MTC");
+        }
 
     }
 
     // Responsable Yoel
-    static String validaRequisitos() {
-        return "";
+    static boolean validaRequisitos(String[] datosPostulante) {
+
+        return true;
+
     }
 
     // Dayer
