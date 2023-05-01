@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Scanner;
 
 public class Main {
@@ -12,7 +14,7 @@ public class Main {
         System.out.println("     validación de trámites, registro postulantes, búsqueda de expedientes     ");
         System.out.println("                         Version 1.0   |   2023                                ");
         System.out.println("-------------------------------------------------------------------------------"+"\n");
-    ;
+
 
         String interruptorAPP = "open";
 
@@ -67,7 +69,7 @@ public class Main {
 
         //Ejemplo nuevo: nombres, apellidos, numDni, edad, direccionDep
 
-        String[] newPostulante = new String[6];
+        String[] newPostulante = new String[11];
 
         Scanner scanner = new Scanner(System.in);
 
@@ -83,23 +85,55 @@ public class Main {
         System.out.println("Documento de identidad: ");
         newPostulante[2] = scanner.next();
 
-        System.out.println("Edad: ");
+        System.out.println("Fecha de vencimiento DNI (dd/mmm/yyyy): ");
         newPostulante[3] = scanner.next();
 
-        System.out.println("Departamento: ");
+        System.out.println("Edad: ");
         newPostulante[4] = scanner.next();
 
+        System.out.println("Departamento: ");
+        newPostulante[5] = scanner.next();
+
+        System.out.println("Categoría a la que postula? (A1/A2A/A2B/A3A/A3B/A3C): ");
+        newPostulante[6] = scanner.next();
+
+        if (!newPostulante[6].equals("A1")){
+
+            System.out.println("Categoría actual: ");
+            newPostulante[7] = scanner.next();
+
+            System.out.println("Fecha de emisión de brevete: dd/mm/yyyy ");
+            newPostulante[8] = scanner.next();
+
+            System.out.println("Fecha de vencimiento de brevete: dd/mm/yyyy ");
+            newPostulante[9] = scanner.next();
+
+            System.out.println("Numero de papeletas?: ");
+            newPostulante[10] = scanner.next();
+
+        }else {
+            newPostulante[7] = "NA";
+            newPostulante[8] = "NA";
+            newPostulante[9] = "NA";
+            newPostulante[10] = "0";
+        }
+
         /*
+        ---- estructura de array
         newPostulante[0] = "Frank C.";
         newPostulante[1] = "Valle Sanchez";
         newPostulante[2] = "40740000";
-        newPostulante[3] = "31";
-        newPostulante[4] = "Lima";
+        newPostulante[3] = "Fecha DNI";
+        newPostulante[4] = "31"; Edad
+        newPostulante[5] = "Lima"; Departamento
+        newPostulante[6] = "Categoria";
+        newPostulante[7] = "Fecha brevete";
+        newPostulante[8] = "Nro de papeletas";
+
         */
 
         // Valida si el postulante cumple con los requisitos
-        boolean validPostulante = false;
-        validPostulante = validaRequisitos(newPostulante);
+        boolean validPostulante = registroPostValidarRequisitos(newPostulante);
 
         if (validPostulante) {
             arrayDb.nuevoPostulante(newPostulante);
@@ -111,9 +145,83 @@ public class Main {
     }
 
     // Responsable Yoel
-    static boolean validaRequisitos(String[] datosPostulante) {
+    static boolean registroPostValidarRequisitos(String[] datosPostulante) {
+        boolean valido = true;
+        String categoriaNueva = datosPostulante[6];
+        String categoriaBusqueda = datosPostulante[7]+"-"+ datosPostulante[6]; //"Ejem. A1-A2A"
 
-        return true;
+        // validación departamento
+        if (!datosPostulante[5].toUpperCase().equals("LIMA")){
+            valido = false;
+            System.out.println("No es posible registrar postulante.\nEl domicilio ingresado no esta habilitado para registro en Lima");
+        }
+
+        // validación DNI vigente dd/mm/yyyy
+        LocalDate fechaHoy = LocalDate.now();
+        LocalDate fechaDNI = LocalDate.of (Integer.parseInt(datosPostulante[3].substring(6)), Integer.parseInt(datosPostulante[3].substring(3, 5)), Integer.parseInt(datosPostulante[3].substring(0, 2)));
+        long diasVencimientoDni = ChronoUnit.DAYS.between(fechaHoy,fechaDNI);
+
+        if (valido && !(diasVencimientoDni > 0)){
+            valido = false;
+            System.out.println("No es posible registrar postulante.\nDocumento de identidad vencido");
+        }
+
+
+
+        // tabla  de validación de recategorización
+        String[][] tablaValidacion = new String[][]{
+                {"NA-A1","A1-A2A","A1-A2B","A2A-A2B","A2B-A3A","A2B-A3B","A2B-A3C","A3A-A3C","A3B-A3C"}, // categoría
+                {"18","21","21","21","24","24","27","27","27"}, // edad mínima
+                {"0","2","3","1","2","2","4","1","1"} // antiguedad de licencia
+        };
+
+        int posCategoria = 0;
+
+        for (int i =0; i < 7; i++){
+            String cat = tablaValidacion[0][i];
+            if (categoriaBusqueda.equals(cat)){
+                posCategoria = i;
+            }
+        }
+
+        // Validación edad
+        int edad = Integer.parseInt(datosPostulante[4]);
+        int edadMinima = Integer.parseInt(tablaValidacion[1][posCategoria]);
+
+        if (valido &&  !(edad >= edadMinima)) {
+            valido = false;
+            System.out.println("No es posible registrar postulante.\nNo se cumple con la edad minima de "+ edadMinima + " años para la categoría "+categoriaNueva);
+        }
+
+        if (!categoriaNueva.equals("A1")){
+            // numero de papeletas
+            if (valido && !(Integer.parseInt(datosPostulante[10]) > 0)){
+                valido = false;
+                System.out.println("No es posible registrar postulante.\nUsted cuenta con papeletas pendientes.");
+            }
+
+            // Verificar Brevete vigente
+            LocalDate fechaBrevete = LocalDate.of(Integer.parseInt(datosPostulante[9].substring(6)), Integer.parseInt(datosPostulante[9].substring(3, 5)), Integer.parseInt(datosPostulante[9].substring(0, 2)));
+            long diasVencBrevete = ChronoUnit.DAYS.between(fechaHoy,fechaBrevete);
+
+            if (valido && !(diasVencBrevete >= -180 && diasVencBrevete <= 180)) {
+                valido = false;
+                System.out.println("No es posible registrar postulante.\nLa fecha de vencimiento de brevete se encuentra fuera de rango de recategorización");
+            }
+
+            // validación antiguedad de licencia actual
+            LocalDate fechaEmision = LocalDate.of(Integer.parseInt(datosPostulante[8].substring(6)), Integer.parseInt(datosPostulante[8].substring(3, 5)), Integer.parseInt(datosPostulante[8].substring(0, 2)));
+            long diasAntiguedad = ChronoUnit.DAYS.between(fechaEmision,fechaHoy);
+            int diasAntMinima = Integer.parseInt(tablaValidacion[2][posCategoria])*365;
+
+            if (valido &&  !(diasAntiguedad >= diasAntMinima)) {
+                valido = false;
+                System.out.println("No es posible registrar postulante.\nNo se cumple con la antiguedad minima de licencia "+ diasAntMinima + " años para la categoría "+categoriaNueva);
+            }
+
+        }
+
+        return valido;
 
     }
 
@@ -196,6 +304,7 @@ public class Main {
                 break;
         }
         int f =0;
+
         for(int i=0; i<25; i++){
             //limpieza de busquedas anteriores
             tbPostulantes_resultados[i] = new String[11];
