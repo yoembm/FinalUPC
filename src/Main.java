@@ -139,7 +139,7 @@ public class Main {
             arrayDb.nuevoPostulante(newPostulante);
             System.out.println("Se ha ingresado el postulante: \nDNI: " + newPostulante[2] + "\nNombre: " + newPostulante[0] + " " + newPostulante[1] + "\nEdad: " + newPostulante[3] + "\nDepartamento: " + newPostulante[4]);
         } else {
-            System.out.println("El postulante no cumple con los requisitos de acuerdo con los reglamentos del MTC");
+            System.out.println("\nEl postulante no cumple con los requisitos de acuerdo con los reglamentos del MTC");
         }
 
     }
@@ -153,7 +153,7 @@ public class Main {
         // validación departamento
         if (!datosPostulante[5].toUpperCase().equals("LIMA")){
             valido = false;
-            System.out.println("No es posible registrar postulante.\nEl domicilio ingresado no esta habilitado para registro en Lima");
+            System.out.println("\nNo es posible registrar postulante.El domicilio ingresado no esta habilitado para registro en Lima");
         }
 
         // validación DNI vigente dd/mm/yyyy
@@ -163,7 +163,7 @@ public class Main {
 
         if (valido && !(diasVencimientoDni > 0)){
             valido = false;
-            System.out.println("No es posible registrar postulante.\nDocumento de identidad vencido");
+            System.out.println("\nNo es posible registrar postulante.Documento de identidad vencido");
         }
 
 
@@ -190,14 +190,14 @@ public class Main {
 
         if (valido &&  !(edad >= edadMinima)) {
             valido = false;
-            System.out.println("No es posible registrar postulante.\nNo se cumple con la edad minima de "+ edadMinima + " años para la categoría "+categoriaNueva);
+            System.out.println("\nNo es posible registrar postulante.No se cumple con la edad minima de "+ edadMinima + " años para la categoría "+categoriaNueva);
         }
 
         if (!categoriaNueva.equals("A1")){
             // numero de papeletas
-            if (valido && !(Integer.parseInt(datosPostulante[10]) > 0)){
+            if (valido && Integer.parseInt(datosPostulante[10]) > 0){
                 valido = false;
-                System.out.println("No es posible registrar postulante.\nUsted cuenta con papeletas pendientes.");
+                System.out.println("\nNo es posible registrar postulante.Usted cuenta con papeletas pendientes.");
             }
 
             // Verificar Brevete vigente
@@ -206,7 +206,7 @@ public class Main {
 
             if (valido && !(diasVencBrevete >= -180 && diasVencBrevete <= 180)) {
                 valido = false;
-                System.out.println("No es posible registrar postulante.\nLa fecha de vencimiento de brevete se encuentra fuera de rango de recategorización");
+                System.out.println("\nNo es posible registrar postulante.La fecha de vencimiento de brevete se encuentra fuera de rango de recategorización");
             }
 
             // validación antiguedad de licencia actual
@@ -216,13 +216,10 @@ public class Main {
 
             if (valido &&  !(diasAntiguedad >= diasAntMinima)) {
                 valido = false;
-                System.out.println("No es posible registrar postulante.\nNo se cumple con la antiguedad minima de licencia "+ diasAntMinima + " años para la categoría "+categoriaNueva);
+                System.out.println("\nNo es posible registrar postulante.No se cumple con la antiguedad minima de licencia "+ tablaValidacion[2][posCategoria] + " años para la categoría "+categoriaNueva);
             }
-
         }
-
         return valido;
-
     }
 
     // Dayer
