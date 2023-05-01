@@ -1,11 +1,16 @@
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+
+import java.io.InputStreamReader;
+
 import java.util.Scanner;
 
 public class Main {
 
 
     public static  arrayDb myQuery = new arrayDb(); //Variable Global base de datos.
+
 
     public static void main(String[] args) {
 
@@ -129,7 +134,6 @@ public class Main {
         newPostulante[6] = "Categoria";
         newPostulante[7] = "Fecha brevete";
         newPostulante[8] = "Nro de papeletas";
-
         */
 
         // Valida si el postulante cumple con los requisitos
@@ -225,24 +229,45 @@ public class Main {
 
     }
 
-    // Dayer
+    // Harumy
     static void actualizarResultados(){
-        //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
-        String[] evalucion = new String[5];
-        evalucion[0] = "recat A2B";
-        evalucion[1] = "10/12/2022";
-        evalucion[2] = "APTO";
-        evalucion[3] = "20230250003";
-        //mostrar resultados en pantalla;
-        myQuery.actualizarPostulante("01", evalucion);
-        System.out.println();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Ingrese el numero de DNI");
+        String dni= scanner.nextLine();
+        Boolean Verificado = verificar_usuario(dni);
+        if (Verificado == true){
+            System.out.println("el postulante fue verificado");
+            //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
+            String[] evalucion = new String[5];
+            evalucion[0] = "recat A2B";
+            evalucion[1] = "10/12/2022";
+            evalucion[2] = "APTO";
+            evalucion[3] = "20230250003";
+            //mostrar resultados en pantalla;
+            myQuery.actualizarPostulante("01", evalucion);
+
+
+        }
 
     }
 
-    // Harumy
+
+    static boolean verificar_usuario (String dni){
+        boolean resultado = false;
+        String [][] resultado_busqueda=myQuery.buscaPostulantes("dni",dni); //actualmente dos variables
+                  if (resultado_busqueda.length > 0){
+                      resultado=true;
+                  }
+        return resultado;
+
+
+    }
+
+    // Dayer
     static void buscaPostulante() {
         //Ejemplo de buscar
-        String[][] encontrados= myQuery.buscaPostulantes("dni", "44");
+        String[][] encontrados= myQuery.buscaPostulantes("dni", "40740000");
         System.out.println("Encontrados:");
         int e, e1;
         for (e = 0; e< encontrados.length; e++){
@@ -264,7 +289,10 @@ public class Main {
     //columnas del postulante : ID, nombres, apellidos, numDni, edad, direccionDep,
     //columnas del tramite : tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
     public static String[][] tbPostulantes = new String[25][11];
+
     public static String[][] tbPostulantes_resultados = new String[25][11];;
+
+
     //result
     //public static String[] resultados;
     public static int numFilasUsadas;
@@ -310,8 +338,8 @@ public class Main {
             tbPostulantes_resultados[i] = new String[11];
 
             //nuevos resultados
-            if( valor == tbPostulantes[i][columnaAbuscar]){ //validar si existe
-                tbPostulantes_resultados[f]= tbPostulantes[i];
+            if (valor.equals(tbPostulantes[i][columnaAbuscar])) { //si existe
+                tbPostulantes_resultados[f] = tbPostulantes[i];
                 f++;
             }
         }
@@ -347,13 +375,13 @@ public class Main {
      //     columnas del tramite : tramite, categoria, fecha, resultado, NumExpedienteMTC
      static boolean actualizarPostulante(String id, String[] data){
          //int n = numFilasUsadas;
-         for (int i=0; i < numFilasUsadas; i++) {
+         for (int i=10; i < numFilasUsadas; i++) {
              if(tbPostulantes[i][0].equals(id) ){
-                 tbPostulantes[i][5] = data[0];
                  tbPostulantes[i][6] = data[0];
-                 tbPostulantes[i][7] = data[0];
-                 tbPostulantes[i][8] = data[0];
-                 tbPostulantes[i][9] = data[0];
+                 tbPostulantes[i][7] = data[1];
+                 tbPostulantes[i][8] = data[2];
+                 tbPostulantes[i][9] = data[3];
+                 tbPostulantes[i][10] = data[4];
              }
 
          }
