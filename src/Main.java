@@ -99,19 +99,32 @@ public class Main {
         if (Verificado == true){
             System.out.println("el postulante fue verificado");
             //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
-            String[] evalucion = new String[5];
-            evalucion[0] = "recat A2B";
-            evalucion[1] = "10/12/2022";
-            evalucion[2] = "APTO";
-            evalucion[3] = "20230250003";
+            String[] evaluacion = new String[5];
+            Scanner postulante = new Scanner(System.in);
+            System.out.println("Ingrese los datos del postulante");
+            System.out.println("Trámite: ");
+            evaluacion[0]= scanner.nextLine();
+            System.out.println("Fecha: ");
+            evaluacion[1]= scanner.nextLine();
+            System.out.println("Resultado: ");
+            evaluacion[2]= scanner.nextLine();
+            System.out.println("NumExpedienteMTC: ");
+            evaluacion[3]= scanner.nextLine();
+
+            evaluacion[0] = "recat A2B";
+            evaluacion[1] = "10/12/2022";
+            evaluacion[2] = "APTO";
+            evaluacion[3] = "20230250003";
             //mostrar resultados en pantalla;
-            myQuery.actualizarPostulante("01", evalucion);
-
-
+            myQuery.actualizarPostulante("01", evaluacion);
+            System.out.println( " Trámite: recat A2B\n" +
+                    " Fecha: 10/12/2022\n" +
+                    " Resultado: APTO\n" +
+                    " N° de expediente: 20230250003");
+            System.out.println("El postulante fue registrado");
         }
 
     }
-
 
     static boolean verificar_usuario (String dni){
         boolean resultado = false;
