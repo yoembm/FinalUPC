@@ -1,9 +1,16 @@
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+import java.io.InputStreamReader;
+
 import java.util.Scanner;
 
 public class Main {
 
 
     public static  arrayDb myQuery = new arrayDb(); //Variable Global base de datos.
+
 
     public static void main(String[] args) {
 
@@ -12,7 +19,7 @@ public class Main {
         System.out.println("     validación de trámites, registro postulantes, búsqueda de expedientes     ");
         System.out.println("                         Version 1.0   |   2023                                ");
         System.out.println("-------------------------------------------------------------------------------"+"\n");
-    ;
+
 
         String interruptorAPP = "open";
 
@@ -59,9 +66,6 @@ public class Main {
         //System.out.println("-------------------------------------------------------------------------------" );
 
 
-
-
-
     }
 
 
@@ -69,41 +73,198 @@ public class Main {
     static void registraPostulante() {
 
         //Ejemplo nuevo: nombres, apellidos, numDni, edad, direccionDep
-        String[] newPostulante = new String[6];
+
+        String[] newPostulante = new String[11];
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\n Ingrese datos para registro de postulante:");
+        System.out.println("----------------------------------------------------\n");
+
+        System.out.println("Nombre: ");
+        newPostulante[0] = scanner.next();
+
+        System.out.println("Apellidos: ");
+        newPostulante[1] = scanner.next();
+
+        System.out.println("Documento de identidad: ");
+        newPostulante[2] = scanner.next();
+
+        System.out.println("Fecha de vencimiento DNI (dd/mmm/yyyy): ");
+        newPostulante[3] = scanner.next();
+
+        System.out.println("Edad: ");
+        newPostulante[4] = scanner.next();
+
+        System.out.println("Departamento: ");
+        newPostulante[5] = scanner.next();
+
+        System.out.println("Categoría a la que postula? (A1/A2A/A2B/A3A/A3B/A3C): ");
+        newPostulante[6] = scanner.next();
+
+        if (!newPostulante[6].equals("A1")){
+
+            System.out.println("Categoría actual: ");
+            newPostulante[7] = scanner.next();
+
+            System.out.println("Fecha de emisión de brevete: dd/mm/yyyy ");
+            newPostulante[8] = scanner.next();
+
+            System.out.println("Fecha de vencimiento de brevete: dd/mm/yyyy ");
+            newPostulante[9] = scanner.next();
+
+            System.out.println("Numero de papeletas?: ");
+            newPostulante[10] = scanner.next();
+
+        }else {
+            newPostulante[7] = "NA";
+            newPostulante[8] = "NA";
+            newPostulante[9] = "NA";
+            newPostulante[10] = "0";
+        }
+
+        /*
+        ---- estructura de array
         newPostulante[0] = "Frank C.";
         newPostulante[1] = "Valle Sanchez";
         newPostulante[2] = "40740000";
-        newPostulante[3] = "31";
-        newPostulante[4] = "Lima";
-        myQuery.nuevoPostulante( newPostulante );
+        newPostulante[3] = "Fecha DNI";
+        newPostulante[4] = "31"; Edad
+        newPostulante[5] = "Lima"; Departamento
+        newPostulante[6] = "Categoria";
+        newPostulante[7] = "Fecha brevete";
+        newPostulante[8] = "Nro de papeletas";
+        */
 
-        System.out.println("    Se ha ingresado el postulante "+ newPostulante[0]+"\n");
+        // Valida si el postulante cumple con los requisitos
+        boolean validPostulante = registroPostValidarRequisitos(newPostulante);
+
+        if (validPostulante) {
+            arrayDb.nuevoPostulante(newPostulante);
+            System.out.println("Se ha ingresado el postulante: \nDNI: " + newPostulante[2] + "\nNombre: " + newPostulante[0] + " " + newPostulante[1] + "\nEdad: " + newPostulante[3] + "\nDepartamento: " + newPostulante[4]);
+        } else {
+            System.out.println("\nEl postulante no cumple con los requisitos de acuerdo con los reglamentos del MTC");
+        }
 
     }
 
     // Responsable Yoel
-    static String validaRequisitos() {
-        return "";
-    }
+    static boolean registroPostValidarRequisitos(String[] datosPostulante) {
+        boolean valido = true;
+        String categoriaNueva = datosPostulante[6];
+        String categoriaBusqueda = datosPostulante[7]+"-"+ datosPostulante[6]; //"Ejem. A1-A2A"
 
-    // Dayer
-    static void actualizarResultados(){
-        //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
-        String[] evalucion = new String[5];
-        evalucion[0] = "recat A2B";
-        evalucion[1] = "10/12/2022";
-        evalucion[2] = "APTO";
-        evalucion[3] = "20230250003";
-        //mostrar resultados en pantalla;
-        myQuery.actualizarPostulante("01", evalucion);
-        System.out.println();
+        // validación departamento
+        if (!datosPostulante[5].toUpperCase().equals("LIMA")){
+            valido = false;
+            System.out.println("\nNo es posible registrar postulante.El domicilio ingresado no esta habilitado para registro en Lima");
+        }
 
+        // validación DNI vigente dd/mm/yyyy
+        LocalDate fechaHoy = LocalDate.now();
+        LocalDate fechaDNI = LocalDate.of (Integer.parseInt(datosPostulante[3].substring(6)), Integer.parseInt(datosPostulante[3].substring(3, 5)), Integer.parseInt(datosPostulante[3].substring(0, 2)));
+        long diasVencimientoDni = ChronoUnit.DAYS.between(fechaHoy,fechaDNI);
+
+        if (valido && !(diasVencimientoDni > 0)){
+            valido = false;
+            System.out.println("\nNo es posible registrar postulante.Documento de identidad vencido");
+        }
+
+
+
+        // tabla  de validación de recategorización
+        String[][] tablaValidacion = new String[][]{
+                {"NA-A1","A1-A2A","A1-A2B","A2A-A2B","A2B-A3A","A2B-A3B","A2B-A3C","A3A-A3C","A3B-A3C"}, // categoría
+                {"18","21","21","21","24","24","27","27","27"}, // edad mínima
+                {"0","2","3","1","2","2","4","1","1"} // antiguedad de licencia
+        };
+
+        int posCategoria = 0;
+
+        for (int i =0; i < 7; i++){
+            String cat = tablaValidacion[0][i];
+            if (categoriaBusqueda.equals(cat)){
+                posCategoria = i;
+            }
+        }
+
+        // Validación edad
+        int edad = Integer.parseInt(datosPostulante[4]);
+        int edadMinima = Integer.parseInt(tablaValidacion[1][posCategoria]);
+
+        if (valido &&  !(edad >= edadMinima)) {
+            valido = false;
+            System.out.println("\nNo es posible registrar postulante.No se cumple con la edad minima de "+ edadMinima + " años para la categoría "+categoriaNueva);
+        }
+
+        if (!categoriaNueva.equals("A1")){
+            // numero de papeletas
+            if (valido && Integer.parseInt(datosPostulante[10]) > 0){
+                valido = false;
+                System.out.println("\nNo es posible registrar postulante.Usted cuenta con papeletas pendientes.");
+            }
+
+            // Verificar Brevete vigente
+            LocalDate fechaBrevete = LocalDate.of(Integer.parseInt(datosPostulante[9].substring(6)), Integer.parseInt(datosPostulante[9].substring(3, 5)), Integer.parseInt(datosPostulante[9].substring(0, 2)));
+            long diasVencBrevete = ChronoUnit.DAYS.between(fechaHoy,fechaBrevete);
+
+            if (valido && !(diasVencBrevete >= -180 && diasVencBrevete <= 180)) {
+                valido = false;
+                System.out.println("\nNo es posible registrar postulante.La fecha de vencimiento de brevete se encuentra fuera de rango de recategorización");
+            }
+
+            // validación antiguedad de licencia actual
+            LocalDate fechaEmision = LocalDate.of(Integer.parseInt(datosPostulante[8].substring(6)), Integer.parseInt(datosPostulante[8].substring(3, 5)), Integer.parseInt(datosPostulante[8].substring(0, 2)));
+            long diasAntiguedad = ChronoUnit.DAYS.between(fechaEmision,fechaHoy);
+            int diasAntMinima = Integer.parseInt(tablaValidacion[2][posCategoria])*365;
+
+            if (valido &&  !(diasAntiguedad >= diasAntMinima)) {
+                valido = false;
+                System.out.println("\nNo es posible registrar postulante.No se cumple con la antiguedad minima de licencia "+ tablaValidacion[2][posCategoria] + " años para la categoría "+categoriaNueva);
+            }
+        }
+        return valido;
     }
 
     // Harumy
+    static void actualizarResultados(){
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Ingrese el numero de DNI");
+        String dni= scanner.nextLine();
+        Boolean Verificado = verificar_usuario(dni);
+        if (Verificado == true){
+            System.out.println("el postulante fue verificado");
+            //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
+            String[] evalucion = new String[5];
+            evalucion[0] = "recat A2B";
+            evalucion[1] = "10/12/2022";
+            evalucion[2] = "APTO";
+            evalucion[3] = "20230250003";
+            //mostrar resultados en pantalla;
+            myQuery.actualizarPostulante("01", evalucion);
+
+
+        }
+
+    }
+
+
+    static boolean verificar_usuario (String dni){
+        boolean resultado = false;
+        String [][] resultado_busqueda=myQuery.buscaPostulantes("dni",dni); //actualmente dos variables
+                  if (resultado_busqueda.length > 0){
+                      resultado=true;
+                  }
+        return resultado;
+
+
+    }
+
+    // Dayer
     static void buscaPostulante() {
         //Ejemplo de buscar
-        String[][] encontrados= myQuery.buscaPostulantes("dni", "44");
+        String[][] encontrados= myQuery.buscaPostulantes("dni", "40740000");
         System.out.println("Encontrados:");
         int e, e1;
         for (e = 0; e< encontrados.length; e++){
@@ -125,7 +286,10 @@ public class Main {
     //columnas del postulante : ID, nombres, apellidos, numDni, edad, direccionDep,
     //columnas del tramite : tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
     public static String[][] tbPostulantes = new String[25][11];
+
     public static String[][] tbPostulantes_resultados = new String[25][11];;
+
+
     //result
     //public static String[] resultados;
     public static int numFilasUsadas;
@@ -165,13 +329,14 @@ public class Main {
                 break;
         }
         int f =0;
+
         for(int i=0; i<25; i++){
             //limpieza de busquedas anteriores
             tbPostulantes_resultados[i] = new String[11];
 
             //nuevos resultados
-            if( valor == tbPostulantes[i][columnaAbuscar]){ //validar si existe
-                tbPostulantes_resultados[f]= tbPostulantes[i];
+            if (valor.equals(tbPostulantes[i][columnaAbuscar])) { //si existe
+                tbPostulantes_resultados[f] = tbPostulantes[i];
                 f++;
             }
         }
@@ -207,13 +372,13 @@ public class Main {
      //     columnas del tramite : tramite, categoria, fecha, resultado, NumExpedienteMTC
      static boolean actualizarPostulante(String id, String[] data){
          //int n = numFilasUsadas;
-         for (int i=0; i < numFilasUsadas; i++) {
+         for (int i=10; i < numFilasUsadas; i++) {
              if(tbPostulantes[i][0].equals(id) ){
-                 tbPostulantes[i][5] = data[0];
                  tbPostulantes[i][6] = data[0];
-                 tbPostulantes[i][7] = data[0];
-                 tbPostulantes[i][8] = data[0];
-                 tbPostulantes[i][9] = data[0];
+                 tbPostulantes[i][7] = data[1];
+                 tbPostulantes[i][8] = data[2];
+                 tbPostulantes[i][9] = data[3];
+                 tbPostulantes[i][10] = data[4];
              }
 
          }
