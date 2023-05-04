@@ -27,7 +27,7 @@ public class Main {
 
         //Selector de opciones
         do{
-            System.out.println("\n"+"\n"+"                                MENU PRINCIPAL"+"\n");
+            System.out.println("\n\n                                MENU PRINCIPAL"+"\n");
             System.out.println("        [1]. Registrar un nuevo Postulante");
             System.out.println("        [2]. Ingresar resultados de evaluación");
             System.out.println("        [3]. Buscar expedientes médicos");
