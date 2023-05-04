@@ -18,7 +18,7 @@ public class Main {
         System.out.println("                     SISTEMA DE REGISTRO DE POSTULANTES                        ");
         System.out.println("     validación de trámites, registro postulantes, búsqueda de expedientes     ");
         System.out.println("                         Version 1.0   |   2023                                ");
-        System.out.println("-------------------------------------------------------------------------------"+"\n");
+        System.out.println("-------------------------------------------------------------------------------");
 
 
         String interruptorAPP = "open";
@@ -27,7 +27,7 @@ public class Main {
 
         //Selector de opciones
         do{
-            System.out.println("                                MENU PRINCIPAL"+"\n");
+            System.out.println("\n"+"\n"+"                                MENU PRINCIPAL"+"\n");
             System.out.println("        [1]. Registrar un nuevo Postulante");
             System.out.println("        [2]. Ingresar resultados de evaluación");
             System.out.println("        [3]. Buscar expedientes médicos");
@@ -45,7 +45,7 @@ public class Main {
                     actualizarResultados();
                     break;
                 case 3:
-                    buscaPostulante();
+                    buscaExpedientes();
                     break;
                 case 4: interruptorAPP = "end";
 
@@ -74,32 +74,32 @@ public class Main {
 
         //Ejemplo nuevo: nombres, apellidos, numDni, edad, direccionDep
 
-        String[] newPostulante = new String[11];
+        String[] newPostulante = new String[10];
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\n Ingrese datos para registro de postulante:");
-        System.out.println("----------------------------------------------------\n");
+        System.out.println("\n     Ingrese datos para registro de postulante:");
+        System.out.println("    ----------------------------------------------------");
 
-        System.out.println("Nombre: ");
+        System.out.print("      Nombre: ");
         newPostulante[0] = scanner.next();
 
-        System.out.println("Apellidos: ");
+        System.out.print("      Apellidos: ");
         newPostulante[1] = scanner.next();
 
-        System.out.println("Documento de identidad: ");
+        System.out.print("      Documento de identidad: ");
         newPostulante[2] = scanner.next();
 
-        System.out.println("Fecha de vencimiento DNI (dd/mmm/yyyy): ");
+        System.out.print("      Fecha de vencimiento DNI (dd/mmm/yyyy): ");
         newPostulante[3] = scanner.next();
 
-        System.out.println("Edad: ");
+        System.out.print("      Edad: ");
         newPostulante[4] = scanner.next();
 
-        System.out.println("Departamento: ");
+        System.out.print("      Departamento: ");
         newPostulante[5] = scanner.next();
 
-        System.out.println("Categoría a la que postula? (A1/A2A/A2B/A3A/A3B/A3C): ");
+        System.out.print("      Categoría a la que postula? (A1/A2A/A2B/A3A/A3B/A3C): ");
         newPostulante[6] = scanner.next();
 
         if (!newPostulante[6].equals("A1")){
@@ -120,30 +120,17 @@ public class Main {
             newPostulante[7] = "NA";
             newPostulante[8] = "NA";
             newPostulante[9] = "NA";
-            newPostulante[10] = "0";
         }
 
-        /*
-        ---- estructura de array
-        newPostulante[0] = "Frank C.";
-        newPostulante[1] = "Valle Sanchez";
-        newPostulante[2] = "40740000";
-        newPostulante[3] = "Fecha DNI";
-        newPostulante[4] = "31"; Edad
-        newPostulante[5] = "Lima"; Departamento
-        newPostulante[6] = "Categoria";
-        newPostulante[7] = "Fecha brevete";
-        newPostulante[8] = "Nro de papeletas";
-        */
 
         // Valida si el postulante cumple con los requisitos
         boolean validPostulante = registroPostValidarRequisitos(newPostulante);
 
         if (validPostulante) {
             arrayDb.nuevoPostulante(newPostulante);
-            System.out.println("Se ha ingresado el postulante: \nDNI: " + newPostulante[2] + "\nNombre: " + newPostulante[0] + " " + newPostulante[1] + "\nEdad: " + newPostulante[3] + "\nDepartamento: " + newPostulante[4]);
+            System.out.println("      Se ha ingresado el postulante: \n      DNI: " + newPostulante[2] + "\n      Nombre: " + newPostulante[0] + " " + newPostulante[1] + "\n      Edad: " + newPostulante[3] + "\n      Departamento: " + newPostulante[4]);
         } else {
-            System.out.println("\nEl postulante no cumple con los requisitos de acuerdo con los reglamentos del MTC");
+            System.out.println("\n    El postulante no cumple con los requisitos de acuerdo con los reglamentos del MTC");
         }
 
     }
@@ -253,15 +240,11 @@ public class Main {
             System.out.println("NumExpedienteMTC (Debe contener 11 dígitos): ");
             evaluacion[3]= scanner.nextLine();
 
-            /* evaluacion[0] = "recat A2B";
-            evaluacion[1] = "10/12/2022";
-            evaluacion[2] = "APTO";
-            evaluacion[3] = "20230250003";
-            */
+
 
             //mostrar resultados en pantalla;
 
-            myQuery.actualizarPostulante("01", evaluacion);
+            myQuery.actualizarPostulante(dni, evaluacion);
 
             System.out.println( "\nTrámite Solicitado: \n\n" + evaluacion[0] +
                     " Fecha: \n" + evaluacion[1]+
@@ -278,28 +261,48 @@ public class Main {
         boolean resultado = false;
         String posicion = "";
         String [][] resultado_busqueda=myQuery.buscaPostulantes("dni",dni); //actualmente dos variables
-                  if (resultado_busqueda.length > 0){
-                      posicion = resultado_busqueda[0][0];
-                  }
+        if (resultado_busqueda.length > 0){
+            posicion = resultado_busqueda[0][0];
+        }
         return posicion;
 
     }
 
     // Dayer
-    static void buscaPostulante() {
-        //Ejemplo de buscar
-        String[][] encontrados= myQuery.buscaPostulantes("dni", "40740000");
-        System.out.println("Encontrados:");
-        int e, e1;
-        for (e = 0; e< encontrados.length; e++){
-            //System.out.println("Encontrados:");
-            System.out.println(" datos fila" +e + ": "+
-                    encontrados[e][0] +", "+ encontrados[e][1]+", "+encontrados[e][2]+", "+
-                    encontrados[e][3]+", "+  encontrados[e][4]+", "+encontrados[e][5]+", "+
-                    encontrados[e][6]+", "+  encontrados[e][7]+", "+encontrados[e][8]+", "+
-                    encontrados[e][9]+", "+  encontrados[e][10]+" ");
+    static void buscaExpedientes() {
+        String buscar = "open";
+        do{
+            System.out.print("\n"+"    [3] BUSQUEDA EXPEDIENTES | Ingrese DNI del postulante: ");
+            Scanner scanner = new Scanner(System.in);
+            String DNI = scanner.next();
 
-        }
+            String[][] encontrados= myQuery.buscaPostulantes("dni", DNI);
+
+            int e, e1;
+            System.out.println("  Nombres |  Apellidos   |    Dni   |  Edad  | Dept | Tramite | Categoría |"
+                    + "Fecha y hora | Resultado | Expediente");
+            for (e = 0; e< encontrados.length; e++){
+
+
+                        //columnas del tramite : tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
+                System.out.println(encontrados[e][0] +" | "+ encontrados[e][1]+" | "+encontrados[e][2]+"| "+
+                        encontrados[e][3]+" |   "+  encontrados[e][4]+" | "+encontrados[e][5]+"  | "+
+                        encontrados[e][6]+" | "+  encontrados[e][7]+" |  "+encontrados[e][8]+" | "+
+                        encontrados[e][9]+"  ");
+
+            }
+            System.out.println("    Se han encontrado "+ e +" expediente(s) "+"\n");
+            System.out.println("    [3] BUSQUEDA EXPEDIENTES | ¿Desea hacer otra busqueda?");
+
+            System.out.print("    Ingrese S para continuar y N para salir al menú principal: ");
+            String respuesta = scanner.next();
+            if(respuesta.equals("S")||respuesta.equals("s")){
+                buscar = "open";
+            }else{
+                buscar = "close";
+            }
+        }while(buscar.equals("open"));
+
     }
 
 
@@ -309,7 +312,7 @@ public class Main {
     //Tabla "tbPostulantes" (Simulando una BD).
     //columnas del postulante : ID, nombres, apellidos, numDni, edad, direccionDep,
     //columnas del tramite : tramite, categoria, fecha, hora, resultado, NumExpedienteMTC
-    public static String[][] tbPostulantes = new String[25][11];
+    public static String[][] tbPostulantes = new String[25][10];
 
     public static String[][] tbPostulantes_resultados = new String[25][11];;
 
@@ -323,16 +326,19 @@ public class Main {
 
 
     public arrayDb() {
-        //String[][] tbPostulantes = new String[25][11];
-        //String[][] resultados = new String[25][11];
-        //insertando contenido demo
-        String demo1[] = {"11","2","3","41","5","6","7","8","9","10","11"}; tbPostulantes[0]= demo1;
-        String demo2[] = {"12","2","3","42","5","6","7","8","9","10","11"}; tbPostulantes[1]= demo2;
-        String demo3[] = {"13","2","3","43","5","6","7","8","9","10","11"}; tbPostulantes[2]= demo3;
-        String demo4[] = {"14","2","3","44","5","6","7","8","9","10","11"}; tbPostulantes[3]= demo4;
-        String demo5[] = {"15","2","3","45","5","6","7","8","9","10","11"}; tbPostulantes[4]= demo5;
 
-        numFilasUsadas = 10;
+        //insertando contenido demo
+        String demo1[] = {"Juan  A. ","Guzman Flores","40700000","35","Lima","Nuevo","A1 ","01/05/2023","Apto","20235000-001"}; tbPostulantes[0]= demo1;
+        String demo2[] = {"Manuel C.","Romani Juarez","35632422","37","Lima","Recat","A3C","02/05/2023","Apto","20235000-002"}; tbPostulantes[1]= demo2;
+        String demo3[] = {"Mercedes ","Gonzales Soto","33256565","23","Lima","Recat","A2B","02/05/2023","Apto","20235000-003"}; tbPostulantes[2]= demo3;
+        String demo4[] = {"Maria Ana","Venegas Gomez","31323333","42","Lima","Recat","A2B","02/05/2023","Apto","20235000-004"}; tbPostulantes[3]= demo4;
+        String demo5[] = {"Jaime Ney","Rogriguez Rio","48304545","18","Lima","Nuevo","A3C","02/05/2023","Apto","20235000-005"}; tbPostulantes[4]= demo5;
+        String demo6[] = {"Eduardo A","Fausto  Sotil","47526532","42","Lima","Recat","A2B","03/05/2023","Apto","20235000-006"}; tbPostulantes[5]= demo6;
+        String demo7[] = {"Ricardo C","Figueroa Diaz","38659562","18","Lima","Nuevo","A3C","03/05/2023","Apto","20235000-007"}; tbPostulantes[6]= demo7;
+        String demo8[] = {"Ana Maria","Rojas  Perez ","36363252","42","Lima","Recat","A2B","03/05/2023","Apto","20235000-008"}; tbPostulantes[7]= demo8;
+        String demo9[] = {"Rosa Elva","Carbajal Rio ","35262532","18","Lima","Nuevo","A3C","03/05/2023","Apto","20235000-009"}; tbPostulantes[8]= demo9;
+
+        numFilasUsadas = 9;
        // ultimafilaModificada = 10;
     }
 
@@ -344,12 +350,12 @@ public class Main {
                         columnaAbuscar=8;
                 break;
             case "dni": //Si no es numerico
-                        if (!valor.matches("-?\\d+")) {
+                       if (!valor.equals("todos")  && !valor.matches("-?\\d+")) {
                             String [][] arrayError = new String[1][11];
                             arrayError[0][0] = "error";
                             return arrayError;
                         }
-                        columnaAbuscar=3;
+                        columnaAbuscar=2;
                 break;
         }
         int f =0;
@@ -359,7 +365,7 @@ public class Main {
             tbPostulantes_resultados[i] = new String[11];
 
             //nuevos resultados
-            if (valor.equals(tbPostulantes[i][columnaAbuscar])) { //si existe
+             if(valor.equals("todos") || valor.equals(tbPostulantes[i][columnaAbuscar])  ) { //si existe
                 tbPostulantes_resultados[f] = tbPostulantes[i];
                 f++;
             }
@@ -394,10 +400,12 @@ public class Main {
 
      //Método actualizarPostulante . recibe como parametro un String identificador y un Array con datos String
      //     columnas del tramite : tramite, categoria, fecha, resultado, NumExpedienteMTC
-     static boolean actualizarPostulante(String id, String[] data){
+     static boolean actualizarPostulante(String dbDni, String[] data){
          //int n = numFilasUsadas;
-         for (int i=10; i < numFilasUsadas; i++) {
-             if(tbPostulantes[i][0].equals(id) ){
+         //System.out.println(numFilasUsadas);
+
+         for (int i=9; i < numFilasUsadas; i++) {
+             if(tbPostulantes[i][2].equals(dbDni) ){
                  tbPostulantes[i][6] = data[0];
                  tbPostulantes[i][7] = data[1];
                  tbPostulantes[i][8] = data[2];
