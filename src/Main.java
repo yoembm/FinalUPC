@@ -95,45 +95,56 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Ingrese el numero de DNI");
         String dni= scanner.nextLine();
-        Boolean Verificado = verificar_usuario(dni);
-        if (Verificado == true){
-            System.out.println("el postulante fue verificado");
+
+        String posicionPostulante = verificar_usuario(dni);
+
+        if (!posicionPostulante.equals("")){
+
+            System.out.println("\nEl postulante fue verificado.\n");
             //Ejemplo actualizar. columnas del tramite : tramite, fecha, resultado, NumExpedienteMTC
             String[] evaluacion = new String[5];
             Scanner postulante = new Scanner(System.in);
             System.out.println("Ingrese los datos del postulante");
-            System.out.println("Trámite: ");
+            System.out.println("________________________________\n");
+            System.out.println("Trámite (A1/A2A/A2B/A3A/A3B/A3C): ");
+
             evaluacion[0]= scanner.nextLine();
-            System.out.println("Fecha: ");
+            System.out.println("Fecha (dd/mmm/yyyy): ");
             evaluacion[1]= scanner.nextLine();
-            System.out.println("Resultado: ");
+            System.out.println("Resultado (APTO/NO APTO): ");
             evaluacion[2]= scanner.nextLine();
-            System.out.println("NumExpedienteMTC: ");
+            System.out.println("NumExpedienteMTC (Debe contener 11 dígitos): ");
             evaluacion[3]= scanner.nextLine();
 
-            evaluacion[0] = "recat A2B";
+            /* evaluacion[0] = "recat A2B";
             evaluacion[1] = "10/12/2022";
             evaluacion[2] = "APTO";
             evaluacion[3] = "20230250003";
+            */
+
             //mostrar resultados en pantalla;
+
             myQuery.actualizarPostulante("01", evaluacion);
-            System.out.println( " Trámite: recat A2B\n" +
-                    " Fecha: 10/12/2022\n" +
-                    " Resultado: APTO\n" +
-                    " N° de expediente: 20230250003");
+
+            System.out.println( "\nTrámite Solicitado: \n\n" + evaluacion[0] +
+                    " Fecha: \n" + evaluacion[1]+
+                    " Resultado: \n" + evaluacion[2]+
+                    " N° de expediente: "+evaluacion[3]);
             System.out.println("El postulante fue registrado");
+        }else{
+            System.out.println("\nUsuario no registrado.");
         }
 
     }
 
-    static boolean verificar_usuario (String dni){
+    static String verificar_usuario (String dni){ // Devuelve posicion de postulante
         boolean resultado = false;
+        String posicion = "";
         String [][] resultado_busqueda=myQuery.buscaPostulantes("dni",dni); //actualmente dos variables
                   if (resultado_busqueda.length > 0){
-                      resultado=true;
+                      posicion = resultado_busqueda[0][0];
                   }
-        return resultado;
-
+        return posicion;
 
     }
 
