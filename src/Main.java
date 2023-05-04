@@ -410,7 +410,6 @@ public class Main {
                  tbPostulantes[i][7] = data[1];
                  tbPostulantes[i][8] = data[2];
                  tbPostulantes[i][9] = data[3];
-                 tbPostulantes[i][10] = data[4];
              }
 
          }
